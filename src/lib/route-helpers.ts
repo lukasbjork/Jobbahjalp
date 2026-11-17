@@ -1,6 +1,11 @@
 import "server-only";
 import { NextResponse } from "next/server";
-import { InvalidKeyError, MissingKeyError, RateLimitError } from "@/lib/claude";
+import {
+  BillingError,
+  InvalidKeyError,
+  MissingKeyError,
+  RateLimitError,
+} from "@/lib/claude";
 import type { ApiError } from "@/lib/types";
 
 /** 400 med ett begripligt svenskt meddelande. */
@@ -32,6 +37,15 @@ export function errorResponse(err: unknown): NextResponse<ApiError> {
           "API-nyckeln verkar ogiltig eller återkallad. Kontrollera ANTHROPIC_API_KEY.",
       },
       { status: 500 },
+    );
+  }
+  if (err instanceof BillingError) {
+    return NextResponse.json(
+      {
+        error:
+          "Inga krediter kvar på Anthropic-kontot. Lägg till betalning på console.anthropic.com under Billing.",
+      },
+      { status: 402 },
     );
   }
   // Logga internt, men exponera inget tekniskt för användaren.

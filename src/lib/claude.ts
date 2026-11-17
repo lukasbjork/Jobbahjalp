@@ -36,6 +36,14 @@ export class RateLimitError extends Error {
   }
 }
 
+/** Kastas vid 402 (slut på krediter/betalningsproblem på Anthropic-kontot). */
+export class BillingError extends Error {
+  constructor() {
+    super("Inga krediter kvar på Anthropic-kontot.");
+    this.name = "BillingError";
+  }
+}
+
 function getClient(): Anthropic {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new MissingKeyError();
@@ -53,6 +61,11 @@ function mapError(err: unknown): never {
   }
   if (err instanceof Anthropic.AuthenticationError) {
     throw new InvalidKeyError();
+  }
+  // 402 (billing_error) har ingen egen typad klass i SDK:n - kolla statuskoden
+  // direkt på basklassen istället.
+  if (err instanceof Anthropic.APIError && err.status === 402) {
+    throw new BillingError();
   }
   throw err;
 }
