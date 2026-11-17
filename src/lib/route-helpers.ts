@@ -1,6 +1,6 @@
 import "server-only";
 import { NextResponse } from "next/server";
-import { MissingKeyError, RateLimitError } from "@/lib/gemini";
+import { InvalidKeyError, MissingKeyError, RateLimitError } from "@/lib/claude";
 import type { ApiError } from "@/lib/types";
 
 /** 400 med ett begripligt svenskt meddelande. */
@@ -20,7 +20,16 @@ export function errorResponse(err: unknown): NextResponse<ApiError> {
     return NextResponse.json(
       {
         error:
-          "Servern saknar API-nyckel. Lägg in GEMINI_API_KEY och försök igen.",
+          "Servern saknar API-nyckel. Lägg in ANTHROPIC_API_KEY och försök igen.",
+      },
+      { status: 500 },
+    );
+  }
+  if (err instanceof InvalidKeyError) {
+    return NextResponse.json(
+      {
+        error:
+          "API-nyckeln verkar ogiltig eller återkallad. Kontrollera ANTHROPIC_API_KEY.",
       },
       { status: 500 },
     );

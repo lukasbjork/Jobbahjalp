@@ -15,7 +15,7 @@ vanlig, mänsklig ton, inte som typisk AI-text.
 
 - Next.js 16 (App Router) + TypeScript + React 19
 - Tailwind CSS v4
-- Google Gemini via `@google/genai` (anropas bara server-side)
+- Anthropic Claude via `@anthropic-ai/sdk` (anropas bara server-side)
 - PDF-text läses i webbläsaren med `pdfjs-dist` (filen lämnar aldrig din dator)
 - Ansökningslistan sparas i webbläsarens `localStorage` (ingen databas)
 
@@ -27,17 +27,18 @@ vanlig, mänsklig ton, inte som typisk AI-text.
    npm install
    ```
 
-2. Skapa en gratis API-nyckel hos Google:
-   - Gå till https://aistudio.google.com
-   - Logga in med ett Google-konto (inget kreditkort behövs)
-   - Skapa en API-nyckel under "Get API key"
+2. Skaffa en API-nyckel hos Anthropic:
+   - Gå till https://console.anthropic.com
+   - Skapa en API-nyckel under "API Keys"
+   - Lägg till betalkort/krediter under "Billing" (betala-per-användning, inget
+     gratis-abonnemang, men kostnaden är mycket låg för denna typ av text)
 
 3. Lägg nyckeln i en fil som heter `.env.local` i projektroten:
 
    ```bash
-   GEMINI_API_KEY=din-nyckel-här
-   # Valfritt, standard är gemini-3.5-flash:
-   GEMINI_MODEL=gemini-3.5-flash
+   ANTHROPIC_API_KEY=din-nyckel-här
+   # Valfritt, standard är claude-sonnet-5:
+   ANTHROPIC_MODEL=claude-sonnet-5
    ```
 
    Du kan utgå från `.env.example`. Filen `.env.local` är redan med i `.gitignore`
@@ -63,15 +64,14 @@ npm start
 1. Pusha koden till ett GitHub-repo.
 2. Gå till https://vercel.com, välj **Add New → Project** och importera repot.
 3. Under **Settings → Environment Variables**, lägg till:
-   - `GEMINI_API_KEY` = din nyckel
-   - (valfritt) `GEMINI_MODEL` = `gemini-3.5-flash`
+   - `ANTHROPIC_API_KEY` = din nyckel
+   - (valfritt) `ANTHROPIC_MODEL` = `claude-sonnet-5`
 4. Klicka **Deploy**. Inga andra inställningar behövs.
 
 ## Modell
 
-Standardmodellen är `gemini-3.5-flash`. Vill du ha högre dagliga gratisgränser kan du
-sätta `GEMINI_MODEL=gemini-3.1-flash-lite`. Kontrollera aktuella modellnamn på
-https://ai.google.dev om något slutar fungera.
+Standardmodellen är `claude-sonnet-5`. Du kan byta modell via miljövariabeln
+`ANTHROPIC_MODEL` om du vill testa en annan Claude-modell.
 
 ## Bra att veta
 
@@ -79,6 +79,11 @@ https://ai.google.dev om något slutar fungera.
   synkas inte mellan datorer eller webbläsare. Rensar du webbläsardata försvinner den.
 - **Ditt CV sparas inte.** CV-texten finns bara i minnet under sessionen och
   försvinner när du laddar om sidan.
-- **Integritet.** På Geminis gratisnivå kan text du skickar in användas för att
-  förbättra Googles modeller. Lägg därför inte in känsliga uppgifter som personnummer.
+- **Integritet.** Anthropics API använder som standard inte kundens data för att
+  träna sina modeller. Lägg ändå inte in mer känsliga uppgifter än nödvändigt
+  (t.ex. personnummer) i CV-texten du klistrar in.
+- **Kostnad.** Varje genererat brev/svar/mejl kostar typiskt en bråkdel av en krona.
+  Det finns ingen daglig gratiskvot längre - du betalar löpande för det du använder,
+  vilket också innebär att tjänsten inte "slutar fungera" efter ett visst antal
+  anrop per dag.
 - Allt innehåll genereras på svenska.
