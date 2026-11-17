@@ -74,9 +74,10 @@ export default function Home() {
           </main>
 
           <footer className="mt-10 text-center text-xs text-muted">
-            Ansökningslistan sparas bara lokalt i den här webbläsaren. Lägg inte in
-            känsliga uppgifter som personnummer. På Geminis gratisnivå kan inskickad
-            text användas för att förbättra Googles modeller.
+            Ansökningslistan sparas bara lokalt i den här webbläsaren. Anthropic
+            tränar som standard inte sina modeller på data skickad via API:et,
+            men lägg ändå inte in mer känsliga uppgifter än nödvändigt, som
+            personnummer.
           </footer>
         </div>
       </ApplicationsProvider>
